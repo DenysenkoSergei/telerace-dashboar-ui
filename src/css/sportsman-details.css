@@ -51,6 +51,7 @@
 .sportsman-details .sportsman-list-item .sportsman-name:hover {
     background-color: #3D85E8;
     color: #FFF;
+    color: #FFF;
 }
 
 .sportsman-details .sportsman-list-item img:hover + .sportsman-name {
@@ -67,11 +68,12 @@
 }
 
 .sportsman-details .big-icon-wrapper {
-    width: 200px;
+    min-width: 200px !important;
+    max-width: 200px !important;
 }
 
 .sportsman-details .metrics-wrapper {
-    width: 150px;
+    width: 150px !important;
 }
 
 .sportsman-details .sportsman-metric .metric-value {
