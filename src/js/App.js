@@ -220,8 +220,6 @@ class App extends React.Component {
                         this.tempData2.push(parsedMessage);
                     })
             });
-
-        this.setState({sessionList: sessionList})
     }
 
 }
