@@ -53,7 +53,7 @@ class App extends React.Component {
                                   })
                               });
                 MqttProvider.subscribeToMqtt();
-                this.interval = setInterval(() => this.updateState123(), 5000);
+                this.interval = setInterval(() => this.updateState123(), 2000);
             }
         });
     }
@@ -130,7 +130,7 @@ class App extends React.Component {
             }
         })
         MqttProvider.subscribeToMqtt();
-        this.interval = setInterval(() => this.updateState123(), 5000);
+        this.interval = setInterval(() => this.updateState123(), 2000);
     }
 
     stopSession() {
