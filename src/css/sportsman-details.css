@@ -64,7 +64,7 @@
 .sportsman-details .sportsman-metric-block {
     height: 200px;
     border-bottom: 1px solid #F3F3F3;
-    margin-bottom: 30px;
+    margin-top: 30px !important;
 }
 
 .sportsman-details .big-icon-wrapper {
@@ -73,7 +73,8 @@
 }
 
 .sportsman-details .metrics-wrapper {
-    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
 }
 
 .sportsman-details .sportsman-metric .metric-value {
