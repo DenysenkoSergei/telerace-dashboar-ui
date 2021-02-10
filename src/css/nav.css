@@ -1,0 +1,22 @@
+.nav {
+    margin-top: 43px;
+}
+
+.nav-item-button {
+    margin-right: 20px;
+    background-color: #E6E6E6;
+    font-size: 18px;
+    height: 56px;
+    border-radius: 10px;
+    line-height: 19px;
+    padding-left: 31px;
+    padding-right: 31px;
+    font-weight: 600;
+}
+
+.nav-item-button a {
+    color: #FFFFFF;
+    text-align: left;
+    overflow-wrap: break-word;
+    overflow-y: auto;
+}

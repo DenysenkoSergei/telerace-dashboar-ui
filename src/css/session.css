@@ -1,0 +1,267 @@
+/*Session*/
+
+.session-block {
+    border-radius: 10px;
+    height: 350px;
+    max-height: 350px;
+}
+
+.session-block .session-header {
+    border-radius: 10px 10px 0 0;
+}
+
+.session-block .tab-header {
+    font-size: 18px;
+    line-height: 18px;
+    font-weight: 600;
+    padding: 30px 0;
+    /*color: #00BDD8;*/
+}
+
+.session-block .inactive-tab-header {
+    border-radius: 0;
+    background-color: #FFFFFF;
+    color: #BEBEBE;
+}
+
+.session-block .active-tab-header {
+    color: #FFFFFF;
+    /*color: #00BDD8;*/
+}
+
+.session-config {
+    padding: 0;
+    border-radius: 0 10px 10px 10px;
+}
+
+.session-block .session-name-input {
+    width: 380px;
+    height: 56px;
+    margin-top: 50px;
+    padding: 10px 20px;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    line-height: 16px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.session-block .session-name-input:focus {
+    color: #FFFFFF;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+}
+
+.session-block .session-name-input::placeholder {
+    color: #FFFFFF;
+}
+
+.session-block .session-name-input:focus::placeholder {
+    color: transparent;
+}
+
+.sportsman-select {
+    position: absolute;
+    z-index: 20;
+    width: 380px;
+    margin-top: 150px;
+    border-radius: 10px;
+}
+
+.session-block .active-session-name {
+    width: 380px;
+    height: 56px;
+    margin-top: 50px;
+    padding: 0 20px 0 30px;
+    color: #FFFFFF;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+.session-block .active-session-sportsmen-wrapper {
+    position: absolute;
+    margin-top: 146px;
+    width: 380px;
+    color: #FFFFFF;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+.session-block .active-session-sportsmen-label {
+    padding: 0 20px 0 30px;
+    height: 56px;
+    color: #FFFFFF;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+.session-block .active-session-sportsmen-list {
+    padding: 0 10px 20px 10px;
+    color: #FFFFFF;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+.session-block .active-session-sportsman {
+    border: 1px solid #FFFFFF;
+    margin: 10px 10px 0 0;
+    padding: 1px 5px;
+    color: #FFFFFF;
+    font-size: 19px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+
+.session-block .active-session-sportsman:hover {
+    background-color: #FFFFFF;
+    color: #0086B0;
+}
+
+.start-session-button {
+    width: 341px;
+    height: 56px;
+    margin-top: 50px;
+    color: #002C47;
+    background-color: #FFFFFF;
+    border-radius: 30px;
+    font-size: 30px;
+    font-weight: 600;
+    box-shadow: 2px 2px 10px -1px rgba(0,0,0,0.63);
+    cursor: pointer;
+}
+
+/**/
+
+.checkbox-select {
+    padding: 0 10px;
+    text-align: left;
+}
+
+.checkbox-select .title-block {
+    padding: 0 10px;
+    line-height: 16px;
+    height: 56px;
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.session-block .stop-session-button-wrapper {
+    padding: 12px;
+    width: 250px;
+    border-bottom: 1px solid #29BAE6;
+    border-top: 1px solid #29BAE6;
+}
+
+.session-block .stop-session-button-wrapper img {
+    cursor: pointer;
+}
+
+.react-confirm-alert-overlay {
+    background: transparent !important;
+}
+
+.session-stop-confirmation {
+    width: 470px;
+    height: 325px;
+    background-color: #FFFFFF;
+    color: #000000;
+    font-size: 30px;
+    font-weight: 600;
+    border-radius: 10px;
+    -webkit-box-shadow: 2px 2px 10px -1px rgba(0,0,0,0.63);
+    box-shadow: 2px 2px 10px -1px rgba(0,0,0,0.63);
+}
+
+.session-stop-confirmation button {
+    width: 140px;
+    height: 56px;
+    margin: 0 18px;
+    font-size: 24px;
+    font-weight: 600;
+    background-color: #E6E6E6;
+    border-radius: 10px;
+    border: none;
+}
+
+.session-block .session-stop-confirmation .yes-button {
+
+}
+
+.session-block .session-timer-wrapper {
+    color: #00D2D6;
+    font-size: 30px;
+    margin-top: 15px;
+}
+
+.select-block {
+    border-top: 1px solid #00A8DB;
+    z-index: 3;
+    max-height: 290px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-bottom: 10px;
+}
+
+.round {
+    position: relative;
+    color: #0087D1;
+}
+
+.round label {
+    background-color: #0087D1;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 25px;
+    left: 5px;
+    position: absolute;
+    top: 1px;
+    width: 25px;
+}
+
+.round label:after {
+    border: 2px solid #0087D1;
+    border-top: none;
+    border-right: none;
+    content: "";
+    height: 6px;
+    left: 6px;
+    opacity: 0;
+    position: absolute;
+    top: 8px;
+    transform: rotate(-45deg);
+    width: 12px;
+}
+
+.round input[type="checkbox"] {
+    visibility: hidden;
+}
+
+.round input[type="checkbox"]:checked + label {
+    background-color: #FFFFFF;
+    border-color: #FFFFFF;
+}
+
+.round input[type="checkbox"]:checked + label:after {
+    opacity: 1;
+}
+
+.round-label {
+    color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 600;
+    margin-left: 40px;
+}
+
+.select-block .row {
+    padding: 10px 0 5px 20px;
+    margin-bottom: 2px;
+}
+
+
+/**/

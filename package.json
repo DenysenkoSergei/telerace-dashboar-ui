@@ -3,13 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.9",
-    "@testing-library/react": "^11.2.4",
-    "@testing-library/user-event": "^12.6.3",
+    "@fontsource/ubuntu": "^4.1.0",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.4.1",
+    "chart.js": "2.9.4",
+    "chartjs-plugin-annotation": "^0.5.7",
+    "chartjs-plugin-zoom": "0.7.7",
+    "d3": "^6.5.0",
+    "mqtt": "^4.2.6",
     "react": "^17.0.1",
+    "react-bootstrap": "^1.4.3",
+    "react-confirm-alert": "^2.7.0",
     "react-dom": "^17.0.1",
-    "react-scripts": "4.0.1",
-    "web-vitals": "^0.2.4"
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -17,10 +24,10 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://95.84.140.16:81",
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "react-app"
     ]
   },
   "browserslist": {

@@ -1,0 +1,96 @@
+body {
+  margin: 0;
+  font-family: -apple-system, 'Ubuntu', 'MyriadPro-Regular', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.container {
+  font-family: 'Ubuntu', 'MyriadPro-Regular', sans-serif;
+}
+
+.margin-left-0 {
+  margin-left: 0 !important;
+}
+
+.margin-right-0 {
+  margin-right: 0 !important;
+}
+
+.gradient-type1 {
+  background: rgb(0,210,213);
+  background: linear-gradient(90deg, rgba(0,210,213,1) 15%, rgba(0,127,224,1) 85%);
+}
+
+.gradient-type2 {
+  background: rgb(0,134,219);
+  background: linear-gradient(90deg, rgba(0,134,219,1) 15%, rgba(135,42,222,1) 85%);
+}
+
+.gradient-type3 {
+  background: rgb(123,49,222);
+  background: linear-gradient(90deg, rgba(123,49,222,1) 15%, rgba(42,118,222,1) 85%);
+}
+
+.gradient-type4 {
+  background: rgb(42,118,222);
+  background: linear-gradient(90deg, rgba(42,118,222,1) 15%, rgba(61,133,232,1) 85%);
+}
+
+.gradient-type5 {
+  background: rgb(0,176,214);
+  background: linear-gradient(45deg, rgba(0,176,214,1) 15%, rgba(0,117,207,1) 85%);
+}
+
+.gradient-type6 {
+  background: rgb(0,165,213);
+  background: linear-gradient(90deg, rgba(0,165,213,1) 15%, rgba(0,124,208,1) 85%);
+}
+
+.app-content {
+  margin-top: 26px;
+  padding-top: 26px;
+  border-top: 2px solid #F3F3F3;
+  width: 100%;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar,
+.dashboard-scrollbar::-webkit-scrollbar-thumb,
+.dashboard-scrollbar::-webkit-scrollbar-track {
+  width: 15px;
+  border: none;
+  background: transparent;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-button,
+.dashboard-scrollbar::-webkit-scrollbar-track-piece,
+.dashboard-scrollbar::-webkit-scrollbar-corner,
+.dashboard-scrollbar::-webkit-resizer {
+  display: none;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 9px;
+  background-color: #00D2D6;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-track {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-image: url("/src/img/track.png");
+  background-repeat: repeat-y;
+  background-size: contain;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-track-piece:start {
+  background: transparent;
+  margin-top: 100px;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-track-piece:end {
+  margin-bottom: 100px;
+}

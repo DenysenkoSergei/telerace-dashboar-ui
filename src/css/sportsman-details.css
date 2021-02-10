@@ -1,0 +1,88 @@
+.sportsman-details .sportsman-details-header {
+    border-bottom: 1px solid #F4F4F4;
+    padding-bottom: 5px;
+}
+.sportsman-details .current-sportsman {
+    height: 130px;
+    min-width: 350px;
+    border-radius: 65px;
+    padding: 8px;
+    background-color: #F4F4F4;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.sportsman-details .current-sportsman-photo {
+    border-radius: 57px;
+}
+
+.sportsman-details .sportsmen-list-wrapper {
+    margin-left: 20px;
+}
+
+.sportsman-details .sportsmen-list-title {
+    font-size: 15px;
+}
+
+.sportsman-details .sportsman-list {
+    font-size: 17px;
+}
+
+.sportsman-details .sportsman-list-item {
+    height: 35px;
+    margin: 5px 25px;
+}
+
+.sportsman-details .sportsman-list-item img {
+    border-radius: 18px;
+    cursor: pointer;
+}
+
+.sportsman-details .sportsman-list-item .sportsman-name {
+    height: 30px;
+    border-radius: 20px;
+    margin-left: 5px;
+    border: 1px solid #29B6EF;
+    padding: 5px;
+    color: #3D85E8;
+    cursor: pointer;
+}
+
+.sportsman-details .sportsman-list-item .sportsman-name:hover {
+    background-color: #3D85E8;
+    color: #FFF;
+}
+
+.sportsman-details .sportsman-list-item img:hover + .sportsman-name {
+    background-color: #3D85E8;
+    color: #FFF;
+}
+
+
+/*Metrics*/
+.sportsman-details .sportsman-metric-block {
+    height: 200px;
+    border-bottom: 1px solid #F3F3F3;
+    margin-bottom: 30px;
+}
+
+.sportsman-details .big-icon-wrapper {
+    width: 200px;
+}
+
+.sportsman-details .metrics-wrapper {
+    width: 150px;
+}
+
+.sportsman-details .sportsman-metric .metric-value {
+    padding-left: 10px;
+    font-size: 32px;
+    line-height: 34px;
+    font-weight: 600;
+}
+
+.sportsman-details .sportsman-metric .metric-type {
+    padding-left: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}

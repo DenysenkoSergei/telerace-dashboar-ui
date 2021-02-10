@@ -1,0 +1,68 @@
+.current-dashboard .card {
+    border-radius: 10px;
+    margin-bottom: 20px;
+    width: 340px;
+    border: none;
+}
+
+.current-dashboard .card-gradient {
+    background: rgb(15,124,219);
+    background: linear-gradient(15deg, rgba(15,124,219,1) 15%, rgba(124,49,222,1) 85%);
+}
+
+.current-dashboard .card-header {
+    font-weight: 600;
+    padding: 25px;
+    font-size: 18px;
+    color: #FFF;
+    cursor: pointer;
+}
+
+.current-dashboard .card-body {
+    padding: 10px 15px 35px 15px;
+    color: #FFFFFF;
+    border-top: 1px solid #256CDC;
+}
+
+.current-dashboard .card:hover {
+    box-shadow: 5px 5px 15px 10px #F0F0F0;
+}
+
+.card-header:hover ~ .card-body {
+    color: #000000;
+    background-color: #FFFFFF;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.current-dashboard .card-body:hover {
+    color: #000000;
+    background-color: #FFFFFF;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+
+.current-dashboard .card-body img {
+    color: #FFFFFF;
+    height: 30px;
+    width: auto;
+}
+
+.current-dashboard .metrics-group-row {
+    margin-top: 30px;
+}
+
+.metric-record-value {
+    line-height: 25px;
+    padding-right: 0;
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.metric-record-value-type {
+    font-size: 14px;
+    font-weight: 300;
+    margin: 0 0 0 3px;
+    padding: 0;
+}
