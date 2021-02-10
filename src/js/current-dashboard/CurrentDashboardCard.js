@@ -1,29 +1,20 @@
 import React from "react";
 import {CurrentDashboardMetricRecord} from "./CurrentDashboardMetricRecord";
-import {Redirect} from "react-router-dom";
 
 export class CurrentDashboardCard extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.state = {
-            redirectToDetails: false
-        }
-
-        this.performRedirectToSportsmanDetails = this.performRedirectToSportsmanDetails.bind(this);
+        this.selectSportsman = this.selectSportsman.bind(this);
     }
 
     render() {
-        if (this.state.redirectToDetails === true) {
-            return <Redirect to='/sportsman-details' />
-        }
-
         const {sportsman} = this.props;
 
         return (
             <div className="card card-gradient">
-                <div className="card-header" onClick={() => this.performRedirectToSportsmanDetails(sportsman.id)}>
+                <div className="card-header" onClick={() => this.selectSportsman(sportsman.id)}>
                     {`${sportsman.name} ${sportsman.surname}`}
                 </div>
                 <div className="card-body">
@@ -89,9 +80,9 @@ export class CurrentDashboardCard extends React.Component {
         }
     }
 
-    performRedirectToSportsmanDetails(id) {
-        localStorage.setItem("currentSportsmanId", id)
-        this.setState({redirectToDetails: true})
+    selectSportsman(id) {
+        localStorage.setItem("currentSportsmanId", id);
+        this.props.selectSportsman();
     }
 
 }

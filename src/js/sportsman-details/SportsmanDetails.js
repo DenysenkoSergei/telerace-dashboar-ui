@@ -8,16 +8,11 @@ export class SportsmanDetails extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            currentSportsman: this.props.currentSportsman
-        }
-
         this.selectAnotherSportsman = this.selectAnotherSportsman.bind(this);
     }
 
     render() {
-        const {sportsmenList} = this.props;
-        const {currentSportsman} = this.state;
+        const {sportsmenList, currentSportsman } = this.props;
 
         return (
             <div className="d-flex h-100 flex-column justify-content-center sportsman-details">
@@ -202,7 +197,7 @@ export class SportsmanDetails extends React.Component {
 
     selectAnotherSportsman(sportsman) {
         localStorage.setItem("currentSportsmanId", sportsman.id);
-        this.setState({currentSportsman: sportsman});
+        this.props.selectSportsman();
     }
 
 }

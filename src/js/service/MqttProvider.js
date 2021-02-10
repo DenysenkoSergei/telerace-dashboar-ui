@@ -2,6 +2,7 @@ import { connect } from 'mqtt';
 
 class MqttProvider {
 
+    // static client = connect('mqtt://localhost:9001');
     static client = connect('mqtt://95.84.140.16:9001');
 
     static initMqtt(sensorCallback, statisticCallBack) {
@@ -14,6 +15,10 @@ class MqttProvider {
                 statisticCallBack(topic, message);
             }
         })
+    }
+
+    static stopClient() {
+        MqttProvider.client.end();
     }
 
     static subscribeToMqtt() {

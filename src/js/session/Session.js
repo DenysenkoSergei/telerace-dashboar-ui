@@ -4,7 +4,6 @@ import SessionTimeCounter from "./SessionTimeCounter";
 import {confirmAlert} from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import '../../css/session.css';
-import {Redirect} from "react-router-dom";
 
 export class Session extends React.Component {
 
@@ -24,10 +23,6 @@ export class Session extends React.Component {
     }
 
     render() {
-        if (this.state.toDetails === true) {
-            return <Redirect to='/sportsman-details' />
-        }
-
         const {sportsmenList, session, allSportsmen, startSession} = this.props;
         const {sessionName} = this.state;
         const sessionExists = !!session;
@@ -172,8 +167,8 @@ export class Session extends React.Component {
     }
 
     performRedirectToSportsmanDetails(id) {
-        localStorage.setItem("currentSportsmanId", id)
-        this.setState({toDetails: true})
+        localStorage.setItem("currentSportsmanId", id);
+        this.props.selectSportsman();
     }
 
 }

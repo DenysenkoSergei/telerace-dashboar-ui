@@ -5,7 +5,7 @@ import "../../css/summary-dashboard.css";
 export class SummaryDashboard extends React.Component {
 
     render() {
-        const {sportsmenList} = this.props;
+        const {sportsmenList, selectSportsman} = this.props;
 
         let maxValues = this.prepareMaxValues(sportsmenList);
         let minValues = this.prepareMinValues(sportsmenList);
@@ -38,6 +38,7 @@ export class SummaryDashboard extends React.Component {
                                 sportsmanSummary={item}
                                 maxValues={maxValues}
                                 minValues={minValues}
+                                selectSportsman={selectSportsman}
                             />
                         ))}
                         </tbody>

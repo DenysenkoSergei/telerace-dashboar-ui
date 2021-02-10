@@ -5,28 +5,32 @@ import '../css/nav.css';
 export class Nav extends React.Component {
 
     render() {
-        const { currentLocation } = this.props;
+        const { showSession, showDetails, showCurrentDashboard, showSummary, onNavClick } = this.props;
 
-        let sessionButtonButtonClasses = 'margin-left-0 ' + (currentLocation === '/' ? 'gradient-type1' : '');
-        let sportsmanDetailsButtonClasses = 'margin-right-0 ' + (currentLocation.startsWith('/sportsman-details') ? 'gradient-type4' : '');
+        let sessionButtonButtonClasses = 'margin-left-0 ' + (showSession ? 'gradient-type1' : '');
+        let sportsmanDetailsButtonClasses = 'margin-right-0 ' + (showDetails ? 'gradient-type4' : '');
 
         return (
             <div className="nav d-flex h-100 align-items-center justify-content-between">
-                <NavItem to='/'
+                <NavItem to='showSession'
                          body={(<img src='img/nav-session-icon.png' alt=""/>)}
                          classNames={sessionButtonButtonClasses}
+                         onClick={onNavClick}
                          show={true}/>
-                <NavItem to='/current-dashboard'
+                <NavItem to="showCurrentDashboard"
                          body={(<img src='img/nav-current-dashboard-icon.png' alt=""/>)}
-                         classNames={currentLocation.startsWith('/current-dashboard') ? 'gradient-type2': ''}
+                         classNames={showCurrentDashboard ? 'gradient-type2': ''}
+                         onClick={onNavClick}
                          show={true}/>
-                <NavItem to='/summary-dashboard'
+                <NavItem to='showSummary'
                          body={(<img src='img/nav-summary-icon.png' alt=""/>)}
-                         classNames={currentLocation.startsWith('/summary-dashboard') ? 'gradient-type3' : ''}
+                         classNames={showSummary ? 'gradient-type3' : ''}
+                         onClick={onNavClick}
                          show={true}/>
-                <NavItem to='/sportsman-details'
+                <NavItem to='showDetails'
                          body={(<img src='img/nav-sportsman-details-icon.png' alt=""/>)}
                          classNames={sportsmanDetailsButtonClasses}
+                         onClick={onNavClick}
                          show={true}/>
             </div>
         );

@@ -2,7 +2,6 @@ import '../css/App.css';
 import "@fontsource/ubuntu"
 import React from "react";
 import {Header} from "./Header";
-import {Switch, Route, withRouter} from 'react-router-dom';
 import {Session} from "./session/Session";
 import {Nav} from "./Nav";
 import {CurrentDashboard} from "./current-dashboard/CurrentDashboard";
@@ -27,7 +26,12 @@ class App extends React.Component {
             sportsmenList: [],
             sessionList: [],
             session: session,
-            sessionSubscribed: false
+            sessionSubscribed: false,
+            showSession: true,
+            showDetails: false,
+            showCurrentDashboard: false,
+            showSummary: false,
+            currentSportsmanId: null
         }
 
         this.mqttSensorMessageHandler = this.mqttSensorMessageHandler.bind(this);
@@ -35,7 +39,9 @@ class App extends React.Component {
         this.startSession = this.startSession.bind(this);
         this.stopSession = this.stopSession.bind(this);
         this.extractFromLocalStorage = this.extractFromLocalStorage.bind(this);
-        this.updateState123 = this.updateState123.bind(this);
+        this.onSportsmanChange = this.onSportsmanChange.bind(this);
+        this.changeTab = this.changeTab.bind(this);
+        this.updateState = this.updateState.bind(this);
     }
 
     componentDidMount() {
@@ -53,54 +59,81 @@ class App extends React.Component {
                                   })
                               });
                 MqttProvider.subscribeToMqtt();
-                this.interval = setInterval(() => this.updateState123(), 2000);
+
+                setInterval(() => this.updateState(), 250);
             }
         });
     }
 
+    componentWillUnmount() {
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+        MqttProvider.stopClient();
+    }
+
     render() {
-        const {sportsmenList, sessionList, session} = this.state;
+        const {sportsmenList, sessionList, session, showSession, showDetails, showCurrentDashboard, showSummary} = this.state;
+
+        let currentSportsman = this.extractFromLocalStorage();
 
         return (
             <div className="App container">
                 <Header/>
-                <Nav currentLocation={this.props.location.pathname}/>
+                <Nav showSession={showSession}
+                     showDetails={showDetails}
+                     showCurrentDashboard={showCurrentDashboard}
+                     showSummary={showSummary}
+                     onNavClick={this.changeTab}/>
+
                 <div className="app-content">
-                    <Switch>
-                        <Route exact path='/'
-                               component={(props) => <Session {...props}
-                                                              sportsmenList={sessionList}
-                                                              allSportsmen={sportsmenList}
-                                                              session={session}
-                                                              startSession={this.startSession}
-                                                              stopSession={this.stopSession}/>}
-                        />
-                        <Route path='/current-dashboard'
-                               component={(props) => <CurrentDashboard {...props}
-                                                                       sportsmenList={sessionList}/>}
-                        />
-                        <Route path='/summary-dashboard'
-                               component={(props) => <SummaryDashboard {...props}
-                                                                       sportsmenList={sessionList}/>}
-                        />
-                        <Route path='/sportsman-details'
-                               component={(props) => <SportsmanDetails {...props}
-                                                                       currentSportsman={this.extractFromLocalStorage()}
-                                                                       sportsmenList={sessionList}/>}
-                        />
-                    </Switch>
+                    {
+                        showSession
+                        ? (<Session sportsmenList={sessionList}
+                                    allSportsmen={sportsmenList}
+                                    session={session}
+                                    startSession={this.startSession}
+                                    stopSession={this.stopSession}
+                                    selectSportsman={this.onSportsmanChange}/>)
+                        : null
+                    }
+                    {
+                        showCurrentDashboard
+                        ? <CurrentDashboard sportsmenList={sessionList} selectSportsman={this.onSportsmanChange} /> : null
+                    }
+                    {
+                        showSummary
+                        ? <SummaryDashboard sportsmenList={sessionList} selectSportsman={this.onSportsmanChange}/> : null
+                    }
+                    {
+                        showDetails
+                        ? (<SportsmanDetails selectSportsman={this.onSportsmanChange}
+                                             currentSportsman={currentSportsman}
+                                             sportsmenList={sessionList}/>)
+                        : null
+                    }
                 </div>
             </div>
         );
     }
 
+    changeTab(val) {
+        this.setState({
+                          showSession: val === 'showSession',
+                          showDetails: val === 'showDetails',
+                          showCurrentDashboard: val === 'showCurrentDashboard',
+                          showSummary: val === 'showSummary'
+                      })
+    }
+
+    onSportsmanChange() {
+        this.changeTab('showDetails');
+    }
+
     extractFromLocalStorage() {
         let currentId = localStorage.getItem("currentSportsmanId");
         if (currentId) {
-            return this.state.sportsmenList.filter(sportsman => {
-                                                       return sportsman.id == currentId
-                                                   }
-            )[0];
+            return this.state.sportsmenList.filter(sportsman => {return sportsman.id == currentId})[0];
         } else {
             return null;
         }
@@ -127,29 +160,30 @@ class App extends React.Component {
                                       return createdSession.session_group.includes(sportsman.id)
                                   })
                               });
+
+                window.location.reload();
             }
         })
-        MqttProvider.subscribeToMqtt();
-        this.interval = setInterval(() => this.updateState123(), 2000);
+
     }
 
     stopSession() {
         localStorage.removeItem("currentSportsmanId");
         SessionProvider.performStopSessionRequest(this.state.session);
         SessionProvider.removeFromLocalstorage();
+        MqttProvider.stopClient();
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
         this.setState({
                           session: undefined,
                           sessionList: []
                       });
-
-        if (this.interval) {
-            clearInterval(this.interval);
-        }
+        window.location.reload();
     }
 
     mqttSensorMessageHandler(topic, message) {
         const {sessionList} = this.state;
-
         let parsedMessage = JSON.parse(message.toString());
 
         sessionList
@@ -159,54 +193,6 @@ class App extends React.Component {
             });
     }
 
-    updateState123() {
-        const typesToOverride = ["speed_avg", "cadence_avg", "power_avg", "heartrate_avg", "speed_max", "cadence_max",
-            "power_max", "heartrate_max", "power_norm"];
-
-        const {sessionList} = this.state;
-
-        this.tempData.forEach(parsedMessage => {
-            sessionList
-                .filter(sportsman => sportsman.id == parsedMessage.athlete_id)
-                .forEach(sportsman => {
-                    if (typesToOverride.includes(parsedMessage.data_type)) {
-                        sportsman[parsedMessage.data_type] = parsedMessage.value
-                    } else {
-                        let valuesArr = sportsman[parsedMessage.data_type];
-
-                        if (valuesArr) {
-                            let lastValue = valuesArr[valuesArr.length - 1];
-                            let totalSum = +lastValue.split("/")[2] * valuesArr.length + parsedMessage.value;
-                            let newAvg = totalSum / (valuesArr.length + 1);
-                            valuesArr.push(
-                                parsedMessage.value + "/" + parsedMessage.timestamp + "/" + newAvg
-                            );
-                        } else {
-                            sportsman[parsedMessage.data_type] = [parsedMessage.value + "/" + parsedMessage.timestamp + "/" + parsedMessage.value];
-                        }
-                    }
-                });
-        })
-
-        this.tempData = [];
-
-        this.tempData2.forEach(parsedMessage => {
-            sessionList
-                .filter(sportsman => sportsman.id == parsedMessage.athlete_id)
-                .forEach(sportsman => {
-                    Object.keys(parsedMessage)
-                        .filter(key => key !== "athlete_id" && key !== "timestamp")
-                        .forEach(key => {
-                            sportsman[key] = parsedMessage[key];
-                        })
-                });
-        })
-
-        this.tempData2 = [];
-
-        this.setState({sessionList: sessionList});
-    }
-
     mqttStatisticMessageHandler(topic, message) {
         const {sessionList} = this.state;
         let parsedMessage = JSON.parse(message.toString());
@@ -214,14 +200,51 @@ class App extends React.Component {
         sessionList
             .filter(sportsman => sportsman.id == parsedMessage.athlete_id)
             .forEach(sportsman => {
-                Object.keys(parsedMessage)
-                    .filter(key => key !== "athlete_id" && key !== "timestamp")
-                    .forEach(key => {
-                        this.tempData2.push(parsedMessage);
-                    })
+                this.tempData2.push(parsedMessage);
             });
+    }
+
+    updateState() {
+        const {sessionList} = this.state;
+        let dataToProcess = this.tempData;
+        this.tempData = [];
+
+        dataToProcess.forEach(parsedMessage => {
+            sessionList
+                .filter(sportsman => sportsman.id == parsedMessage.athlete_id)
+                .forEach(sportsman => {
+                    let valuesArr = sportsman[parsedMessage.data_type];
+                    if (valuesArr) {
+                        let lastValue = valuesArr[valuesArr.length - 1];
+                        let totalSum = +lastValue.split("/")[2] * valuesArr.length + parsedMessage.value;
+                        let newAvg = totalSum / (valuesArr.length + 1);
+                        valuesArr.push(
+                            parsedMessage.value + "/" + parsedMessage.timestamp + "/" + newAvg
+                        );
+                    } else {
+                        sportsman[parsedMessage.data_type] = [parsedMessage.value + "/" + parsedMessage.timestamp + "/" + parsedMessage.value];
+                    }
+                });
+        })
+
+        dataToProcess = this.tempData2;
+        this.tempData2 = [];
+
+        dataToProcess.forEach(parsedMessage => {
+            sessionList
+                .filter(sportsman => sportsman.id == parsedMessage.athlete_id)
+                .forEach(sportsman => {
+                    Object.keys(parsedMessage)
+                        .filter(key => key !== "athlete_id" && key !== "timestamp")
+                        .forEach(key => {
+                            sportsman[key] = parsedMessage[key];
+                        });
+                });
+        })
+
+        this.setState({sessionList: sessionList})
     }
 
 }
 
-export default withRouter(App);
+export default App;

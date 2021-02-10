@@ -5,7 +5,7 @@ import '../../css/current-dashboard.css';
 export class CurrentDashboard extends React.Component {
 
     render() {
-        let { sportsmenList } = this.props;
+        let { sportsmenList, selectSportsman } = this.props;
 
         return (
             <div className="d-flex h-100 flex-wrap flex-row justify-content-around justify-content-between current-dashboard">
@@ -14,6 +14,7 @@ export class CurrentDashboard extends React.Component {
                         <CurrentDashboardCard
                             key={index}
                             sportsman={sportsman}
+                            selectSportsman={selectSportsman}
                         />
                     ))
                 }

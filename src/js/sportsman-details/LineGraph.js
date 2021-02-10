@@ -6,6 +6,7 @@ import 'chartjs-plugin-annotation';
 
 class LineGraph extends React.Component {
     chartRef = React.createRef();
+    chart = null;
 
     constructor(props) {
         super(props);
@@ -18,7 +19,30 @@ class LineGraph extends React.Component {
     }
 
     componentDidUpdate() {
-        this.buildChart();
+        if (this.chart) {
+            const {data, maxValue} = this.props.chartData;
+            const prevData = this.chart.data.datasets[0].data;
+            let sizeDiff = data.length - prevData.length;
+            if (sizeDiff > 0) {
+                const currentData = [];
+                const avgData = [];
+                const preparedLabels = []
+                for (let i = prevData.length; i < data.length; ++i) {
+                    currentData.push(data[i].split("/")[0])
+                    avgData.push(parseFloat(data[i].split("/")[2]).toFixed(2));
+                    preparedLabels.push(new Date(+(data[i].split("/")[1])).toLocaleTimeString());
+                }
+
+                for (let j = 0; j < sizeDiff; ++j) {
+                    this.chart.data.labels.push(preparedLabels[j]);
+                    this.chart.data.datasets[0].data.push(currentData[j]);
+                    this.chart.data.datasets[1].data.push(avgData[j]);
+                    this.chart.options.annotation.annotations[0].value = maxValue;
+                }
+                this.chart.update();
+            }
+
+        }
     }
 
     buildChart() {
@@ -29,8 +53,6 @@ class LineGraph extends React.Component {
         const currentData = data.map(dataObject => dataObject.split("/")[0]);
         const avgData = data.map(dataObject => parseFloat(dataObject.split("/")[2]).toFixed(2));
         const preparedLabels = data.map(dataObject => new Date(+dataObject.split("/")[1]).toLocaleTimeString());
-
-        const pointColors = currentData.map(data => data == maxValue ? '#CF1948' : 'transparent');
 
         let originalLineDraw = Chart.controllers.line.prototype.draw;
         Chart.helpers.extend(Chart.controllers.line.prototype, {
@@ -64,7 +86,7 @@ class LineGraph extends React.Component {
         Chart.defaults.global.defaultFontFamily = "Ubuntu, sans-serif";
         Chart.defaults.global.fontSize = "12";
 
-        new Chart(myChartRef, {
+        this.chart = new Chart(myChartRef, {
             type: "line",
             data: {
                 labels: preparedLabels,
@@ -73,11 +95,10 @@ class LineGraph extends React.Component {
                         id: "live",
                         borderColor: "transparent",
                         backgroundColor: gradient,
-                        pointBackgroundColor: pointColors,
                         pointBorderColor: "transparent",
                         data: currentData,
-                        hoverRadius: 6,
-                        radius: 10,
+                        hoverRadius: 0,
+                        radius: 0,
                         order: 1
                     },
                     {
@@ -177,6 +198,12 @@ class LineGraph extends React.Component {
                 }
             }
         });
+
+        /*setInterval(function(){
+            // Add two random numbers for each dataset
+            chart.addData([Math.random() * 100, Math.random() * 100], new Date().getTime());
+            // Remove the first point so we dont just add values forever
+        }, 100);*/
     }
 
     render() {

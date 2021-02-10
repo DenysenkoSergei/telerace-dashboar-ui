@@ -1,5 +1,4 @@
 import React from "react";
-import {Redirect} from "react-router-dom";
 
 export class SummaryDashboardTableRow extends React.Component {
 
@@ -14,11 +13,7 @@ export class SummaryDashboardTableRow extends React.Component {
     }
 
     render() {
-        if (this.state.redirectToDetails === true) {
-            return <Redirect to='/sportsman-details' />
-        }
-
-        const {sportsmanSummary, maxValues, minValues} = this.props;
+        const {sportsmanSummary, maxValues, minValues } = this.props;
         const {name, surname, heartrate_avg, heartrate_max, speed_avg, speed_max, power_avg, power_max, power_norm, gear_index} = sportsmanSummary;
 
         const prepareColumnClass =
@@ -69,7 +64,7 @@ export class SummaryDashboardTableRow extends React.Component {
 
     performRedirectToSportsmanDetails(id) {
         localStorage.setItem("currentSportsmanId", id);
-        this.setState({redirectToDetails: true})
+        this.props.selectSportsman();
     }
 
 }

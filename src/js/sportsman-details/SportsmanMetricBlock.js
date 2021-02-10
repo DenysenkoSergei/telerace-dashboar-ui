@@ -5,15 +5,6 @@ import {DetailsChart} from "./DetailsChart";
 
 export class SportsmanMetricBlock extends React.Component {
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            currentSportsman: this.props.currentSportsman
-        }
-
-    }
-
     render() {
         const { metrics, bigIconUrl, type, chartData } = this.props;
 
