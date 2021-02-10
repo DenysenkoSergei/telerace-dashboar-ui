@@ -14,6 +14,10 @@ import MqttProvider from "./service/MqttProvider";
 
 class App extends React.Component {
 
+    tempData = [];
+    tempData2 = [];
+    interval = null;
+
     constructor(props) {
         super(props);
 
@@ -31,6 +35,7 @@ class App extends React.Component {
         this.startSession = this.startSession.bind(this);
         this.stopSession = this.stopSession.bind(this);
         this.extractFromLocalStorage = this.extractFromLocalStorage.bind(this);
+        this.updateState123 = this.updateState123.bind(this);
     }
 
     componentDidMount() {
@@ -47,10 +52,9 @@ class App extends React.Component {
                                       return session.session_group.includes(sportsman.id)
                                   })
                               });
+                MqttProvider.subscribeToMqtt();
+                this.interval = setInterval(() => this.updateState123(), 5000);
             }
-
-
-            MqttProvider.subscribeToMqtt();
         });
     }
 
@@ -94,7 +98,8 @@ class App extends React.Component {
         let currentId = localStorage.getItem("currentSportsmanId");
         if (currentId) {
             return this.state.sportsmenList.filter(sportsman => {
-                return sportsman.id == currentId}
+                                                       return sportsman.id == currentId
+                                                   }
             )[0];
         } else {
             return null;
@@ -124,6 +129,8 @@ class App extends React.Component {
                               });
             }
         })
+        MqttProvider.subscribeToMqtt();
+        this.interval = setInterval(() => this.updateState123(), 5000);
     }
 
     stopSession() {
@@ -134,12 +141,13 @@ class App extends React.Component {
                           session: undefined,
                           sessionList: []
                       });
+
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
     }
 
     mqttSensorMessageHandler(topic, message) {
-        const typesToOverride = ["speed_avg", "cadence_avg", "power_avg", "heartrate_avg", "speed_max", "cadence_max",
-            "power_max", "heartrate_max", "power_norm"];
-
         const {sessionList} = this.state;
 
         let parsedMessage = JSON.parse(message.toString());
@@ -147,25 +155,56 @@ class App extends React.Component {
         sessionList
             .filter(sportsman => sportsman.id == parsedMessage.athlete_id)
             .forEach(sportsman => {
-                if (typesToOverride.includes(parsedMessage.data_type)) {
-                    sportsman[parsedMessage.data_type] = parsedMessage.value
-                } else {
-                    let valuesArr = sportsman[parsedMessage.data_type];
-
-                    if (valuesArr) {
-                        let lastValue = valuesArr[valuesArr.length - 1];
-                        let totalSum = +lastValue.split("/")[2] * valuesArr.length + parsedMessage.value;
-                        let newAvg = totalSum / (valuesArr.length + 1);
-                        valuesArr.push(
-                            parsedMessage.value + "/" + parsedMessage.timestamp + "/" + newAvg
-                        );
-                    } else {
-                        sportsman[parsedMessage.data_type] = [parsedMessage.value + "/" + parsedMessage.timestamp + "/" + parsedMessage.value];
-                    }
-                }
+                this.tempData.push(parsedMessage);
             });
+    }
 
-        this.setState({sessionList: sessionList})
+    updateState123() {
+        const typesToOverride = ["speed_avg", "cadence_avg", "power_avg", "heartrate_avg", "speed_max", "cadence_max",
+            "power_max", "heartrate_max", "power_norm"];
+
+        const {sessionList} = this.state;
+
+        this.tempData.forEach(parsedMessage => {
+            sessionList
+                .filter(sportsman => sportsman.id == parsedMessage.athlete_id)
+                .forEach(sportsman => {
+                    if (typesToOverride.includes(parsedMessage.data_type)) {
+                        sportsman[parsedMessage.data_type] = parsedMessage.value
+                    } else {
+                        let valuesArr = sportsman[parsedMessage.data_type];
+
+                        if (valuesArr) {
+                            let lastValue = valuesArr[valuesArr.length - 1];
+                            let totalSum = +lastValue.split("/")[2] * valuesArr.length + parsedMessage.value;
+                            let newAvg = totalSum / (valuesArr.length + 1);
+                            valuesArr.push(
+                                parsedMessage.value + "/" + parsedMessage.timestamp + "/" + newAvg
+                            );
+                        } else {
+                            sportsman[parsedMessage.data_type] = [parsedMessage.value + "/" + parsedMessage.timestamp + "/" + parsedMessage.value];
+                        }
+                    }
+                });
+        })
+
+        this.tempData = [];
+
+        this.tempData2.forEach(parsedMessage => {
+            sessionList
+                .filter(sportsman => sportsman.id == parsedMessage.athlete_id)
+                .forEach(sportsman => {
+                    Object.keys(parsedMessage)
+                        .filter(key => key !== "athlete_id" && key !== "timestamp")
+                        .forEach(key => {
+                            sportsman[key] = parsedMessage[key];
+                        })
+                });
+        })
+
+        this.tempData2 = [];
+
+        this.setState({sessionList: sessionList});
     }
 
     mqttStatisticMessageHandler(topic, message) {
@@ -178,7 +217,7 @@ class App extends React.Component {
                 Object.keys(parsedMessage)
                     .filter(key => key !== "athlete_id" && key !== "timestamp")
                     .forEach(key => {
-                        sportsman[key] = parsedMessage[key];
+                        this.tempData2.push(parsedMessage);
                     })
             });
 
