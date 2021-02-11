@@ -99,11 +99,13 @@ class App extends React.Component {
                     }
                     {
                         showCurrentDashboard
-                        ? <CurrentDashboard sportsmenList={sessionList} selectSportsman={this.onSportsmanChange} /> : null
+                        ? <CurrentDashboard sportsmenList={sessionList} selectSportsman={this.onSportsmanChange}/>
+                        : null
                     }
                     {
                         showSummary
-                        ? <SummaryDashboard sportsmenList={sessionList} selectSportsman={this.onSportsmanChange}/> : null
+                        ? <SummaryDashboard sportsmenList={sessionList} selectSportsman={this.onSportsmanChange}/>
+                        : null
                     }
                     {
                         showDetails
@@ -135,7 +137,9 @@ class App extends React.Component {
     extractFromLocalStorage() {
         let currentId = localStorage.getItem("currentSportsmanId");
         if (currentId) {
-            return this.state.sportsmenList.filter(sportsman => {return sportsman.id == currentId})[0];
+            return this.state.sportsmenList.filter(sportsman => {
+                return sportsman.id == currentId
+            })[0];
         } else {
             return null;
         }
@@ -208,28 +212,8 @@ class App extends React.Component {
 
     updateState() {
         const {sessionList} = this.state;
-        let dataToProcess = this.tempData;
-        this.tempData = [];
 
-        dataToProcess.forEach(parsedMessage => {
-            sessionList
-                .filter(sportsman => sportsman.id == parsedMessage.athlete_id)
-                .forEach(sportsman => {
-                    let valuesArr = sportsman[parsedMessage.data_type];
-                    if (valuesArr) {
-                        let lastValue = valuesArr[valuesArr.length - 1];
-                        let totalSum = +lastValue.split("/")[2] * valuesArr.length + parsedMessage.value;
-                        let newAvg = totalSum / (valuesArr.length + 1);
-                        valuesArr.push(
-                            parsedMessage.value + "/" + parsedMessage.timestamp + "/" + newAvg
-                        );
-                    } else {
-                        sportsman[parsedMessage.data_type] = [parsedMessage.value + "/" + parsedMessage.timestamp + "/" + parsedMessage.value];
-                    }
-                });
-        })
-
-        dataToProcess = this.tempData2;
+        let dataToProcess = this.tempData2;
         this.tempData2 = [];
 
         dataToProcess.forEach(parsedMessage => {
@@ -241,6 +225,41 @@ class App extends React.Component {
                         .forEach(key => {
                             sportsman[key] = parsedMessage[key];
                         });
+                });
+        })
+
+        dataToProcess = this.tempData;
+        this.tempData = [];
+
+        dataToProcess.forEach(parsedMessage => {
+            sessionList
+                .filter(sportsman => sportsman.id == parsedMessage.athlete_id)
+                .forEach(sportsman => {
+                    let valuesArr = sportsman[parsedMessage.data_type];
+                    if (valuesArr) {
+                        let lastValue = valuesArr[valuesArr.length - 1];
+                        let totalSum = +lastValue.split("/")[2] * valuesArr.length + parsedMessage.value;
+                        let newAvg = totalSum / (valuesArr.length + 1);
+                        if (parsedMessage.data_type == "power") {
+                            valuesArr.push(
+                                (parsedMessage.value + "/" + parsedMessage.timestamp + "/" + newAvg + "/" + (sportsman.power_norm
+                                                                                                            ? sportsman.power_norm
+                                                                                                            : 0))
+                            );
+                        } else {
+                            valuesArr.push(
+                                parsedMessage.value + "/" + parsedMessage.timestamp + "/" + newAvg
+                            );
+                        }
+                    } else {
+                        if (parsedMessage.data_type == "power") {
+                            sportsman[parsedMessage.data_type] =
+                                [parsedMessage.value + "/" + parsedMessage.timestamp + "/" + parsedMessage.value + "/"
+                                + (sportsman.power_norm ? sportsman.power_norm : 0)];
+                        } else {
+                            sportsman[parsedMessage.data_type] = [parsedMessage.value + "/" + parsedMessage.timestamp + "/" + parsedMessage.value];
+                        }
+                    }
                 });
         })
 

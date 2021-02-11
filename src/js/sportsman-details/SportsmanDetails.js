@@ -29,7 +29,9 @@ export class SportsmanDetails extends React.Component {
                         ) : null}
                     </div>
                     <div className="sportsmen-list-wrapper flex-grow-1 d-flex d-lex flex-column align-items-center">
-                        <div className="sportsmen-list-title row justify-content-start">Список спортсменов:</div>
+                        <div className="sportsmen-list-title row justify-content-start">
+                            {sportsmenList && sportsmenList.length > 1 ? "Участники сессии:" : null}
+                        </div>
                         <div
                             className="d-flex flex-row flex-wrap align-items-start justify-content-start sportsmen-list">
                             {
@@ -46,23 +48,23 @@ export class SportsmanDetails extends React.Component {
                     <div className="d-flex h-100 flex-column justify-content-center">
                         <SportsmanMetricBlock bigIconUrl={"/img/heartrate-icon-big.png"}
                                               type="heartrate"
-                                              chartData={this.prepareHeartRateChartData(currentSportsman)}
+                                              chartData={this.prepareHeartRateChartData(currentSportsman, false)}
                                               metrics={this.prepareHeartRateMetrics(currentSportsman)}/>
                         <SportsmanMetricBlock bigIconUrl={"/img/speed-icon-big.png"}
                                               type="speed"
-                                              chartData={this.prepareSpeedChartData(currentSportsman)}
+                                              chartData={this.prepareSpeedChartData(currentSportsman, false)}
                                               metrics={this.prepareSpeedMetrics(currentSportsman)}/>
                         <SportsmanMetricBlock bigIconUrl={"/img/power-icon-big.png"}
                                               type="power"
-                                              chartData={this.preparePowerChartData(currentSportsman)}
+                                              chartData={this.preparePowerChartData(currentSportsman, true)}
                                               metrics={this.preparePowerMetrics(currentSportsman)}/>
                         <SportsmanMetricBlock bigIconUrl={"/img/cadence-icon-big.png"}
                                               type="cadence"
-                                              chartData={this.prepareCadenceChartData(currentSportsman)}
+                                              chartData={this.prepareCadenceChartData(currentSportsman, false)}
                                               metrics={this.prepareCadenceMetrics(currentSportsman)}/>
                         <SportsmanMetricBlock bigIconUrl={"/img/gear-icon-big.png"}
                                               type="gear"
-                                              chartData={this.prepareGearChartData(currentSportsman)}
+                                              chartData={this.prepareGearChartData(currentSportsman, false)}
                                               metrics={this.prepareGearMetrics(currentSportsman)}/>
                     </div>
                 ) : null}
@@ -123,12 +125,13 @@ export class SportsmanDetails extends React.Component {
         ];
     }
 
-    preparePowerChartData(sportsman) {
+    preparePowerChartData(sportsman, showPowerNorm) {
         return {
             data: sportsman.power ? sportsman.power : [],
             maxValue: sportsman.power_max ? sportsman.power_max : 0,
             gradientFrom: "#48E5E0",
-            gradientTo: "#34DDA9"
+            gradientTo: "#34DDA9",
+            showPowerNorm: showPowerNorm
         }
     }
 

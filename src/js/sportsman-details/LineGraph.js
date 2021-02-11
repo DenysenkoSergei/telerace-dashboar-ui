@@ -21,7 +21,7 @@ class LineGraph extends React.Component {
 
     componentDidUpdate() {
         if (this.chart) {
-            const {data, maxValue} = this.props.chartData;
+            const {data, showPowerNorm } = this.props.chartData;
             const prevData = this.chart.data.datasets[0].data;
             let currentCharSize = prevData.length;
             let sizeDiff = data.length - currentCharSize;
@@ -29,12 +29,16 @@ class LineGraph extends React.Component {
             if (sizeDiff > 0) {
                 const currentData = [];
                 const avgData = [];
+                const powerNorm = [];
                 const preparedLabels = []
                 for (let i = currentCharSize; i < data.length; ++i) {
                     let currentElement = +data[i].split("/")[0];
                     calculatedMaxValue = calculatedMaxValue > currentElement ? calculatedMaxValue : currentElement;
                     currentData.push(currentElement);
                     avgData.push(parseFloat(data[i].split("/")[2]).toFixed(2));
+                    if (showPowerNorm) {
+                        powerNorm.push(parseFloat(data[i].split("/")[3]).toFixed(2));
+                    }
                     preparedLabels.push(new Date(+(data[i].split("/")[1])).toLocaleTimeString());
                 }
 
@@ -52,6 +56,9 @@ class LineGraph extends React.Component {
                     this.chart.data.labels.push(preparedLabels[j]);
                     this.chart.data.datasets[0].data.push(currentData[j]);
                     this.chart.data.datasets[1].data.push(avgData[j]);
+                    if (showPowerNorm) {
+                        this.chart.data.datasets[2].data.push(powerNorm[j]);
+                    }
                 }
                 this.chart.options.annotation.annotations[0].value = calculatedMaxValue;
                 this.chart.update();
@@ -65,11 +72,16 @@ class LineGraph extends React.Component {
 
         this.maxValuesIndexes = [];
 
-        const {data, maxValue, gradientFrom, gradientTo} = this.props.chartData;
+        const {data, maxValue, showPowerNorm, gradientFrom, gradientTo} = this.props.chartData;
 
         const currentData = data.map(dataObject => dataObject.split("/")[0]);
         const avgData = data.map(dataObject => parseFloat(dataObject.split("/")[2]).toFixed(2));
+        let powerNorm = [];
+        if (showPowerNorm) {
+            powerNorm = data.map(dataObject => parseFloat(dataObject.split("/")[3]).toFixed(2));
+        }
         const preparedLabels = data.map(dataObject => new Date(+dataObject.split("/")[1]).toLocaleTimeString());
+
         const pointColors = currentData.map((data, index) => {
             if (data == maxValue) {
                 this.maxValuesIndexes.push(index);
@@ -111,33 +123,52 @@ class LineGraph extends React.Component {
         Chart.defaults.global.defaultFontFamily = "Ubuntu, sans-serif";
         Chart.defaults.global.fontSize = "12";
 
+        let preparedDatasets = [
+            {
+                id: "live",
+                borderColor: "transparent",
+                backgroundColor: gradient,
+                pointBackgroundColor: pointColors,
+                pointBorderColor: "transparent",
+                data: currentData,
+                hoverRadius: 8,
+                radius: 8,
+                order: 1
+            },
+            {
+                id: "avg",
+                borderColor: "#000000",
+                borderDash: [10,10],
+                backgroundColor: "transparent",
+                pointBackgroundColor: "transparent",
+                pointBorderColor: "transparent",
+                borderWidth: 2,
+                data: avgData,
+                order: 2
+            }
+        ]
+
+        if (showPowerNorm) {
+            preparedDatasets.push(
+                {
+                    id: "powerNorm",
+                    borderColor: "#1395D7",
+                    borderDash: [10,10],
+                    backgroundColor: "transparent",
+                    pointBackgroundColor: "transparent",
+                    pointBorderColor: "transparent",
+                    data: powerNorm,
+                    borderWidth: 2,
+                    order: 3
+                }
+            )
+        }
+
         this.chart = new Chart(myChartRef, {
             type: "line",
             data: {
                 labels: preparedLabels,
-                datasets: [
-                    {
-                        id: "live",
-                        borderColor: "transparent",
-                        backgroundColor: gradient,
-                        pointBackgroundColor: pointColors,
-                        pointBorderColor: "transparent",
-                        data: currentData,
-                        hoverRadius: 8,
-                        radius: 8,
-                        order: 1
-                    },
-                    {
-                        id: "avg",
-                        borderColor: "#000000",
-                        borderDash: [10,10],
-                        backgroundColor: "transparent",
-                        pointBackgroundColor: "transparent",
-                        pointBorderColor: "transparent",
-                        data: avgData,
-                        order: 2
-                    },
-                ]
+                datasets: preparedDatasets
             },
             options: {
                 animation: {
@@ -202,8 +233,8 @@ class LineGraph extends React.Component {
                             mode: 'horizontal',
                             scaleID: 'y-axis-0',
                             value: maxValue,
-                            borderColor: '#9EA1A3',
-                            borderWidth: 1,
+                            borderColor: 'transparent',
+                            borderWidth: 0,
                             borderDash: [2, 2],
                         }
                     ]
