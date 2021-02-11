@@ -42,13 +42,16 @@ class App extends React.Component {
         this.onSportsmanChange = this.onSportsmanChange.bind(this);
         this.changeTab = this.changeTab.bind(this);
         this.updateState = this.updateState.bind(this);
+        this.loadSportsmen = this.loadSportsmen.bind(this);
     }
 
     componentDidMount() {
-        MqttProvider.initMqtt(this.mqttSensorMessageHandler, this.mqttStatisticMessageHandler);
+        this.loadSportsmen();
+    }
+
+    loadSportsmen() {
         SportsmanProvider.loadSportsmen((response) => {
             this.setState({sportsmenList: response.data});
-            SportsmanProvider.storeSportsmen(response.data);
 
             let session = SessionProvider.getSessionFromLocalstorage();
             if (session) {
@@ -58,8 +61,8 @@ class App extends React.Component {
                                       return session.session_group.includes(sportsman.id)
                                   })
                               });
+                MqttProvider.initMqtt(this.mqttSensorMessageHandler, this.mqttStatisticMessageHandler);
                 MqttProvider.subscribeToMqtt();
-
                 setInterval(() => this.updateState(), 250);
             }
         });
@@ -167,7 +170,9 @@ class App extends React.Component {
                                   })
                               });
 
-                window.location.reload();
+                MqttProvider.initMqtt(this.mqttSensorMessageHandler, this.mqttStatisticMessageHandler);
+                MqttProvider.subscribeToMqtt();
+                setInterval(() => this.updateState(), 250);
             }
         })
 
@@ -177,15 +182,16 @@ class App extends React.Component {
         localStorage.removeItem("currentSportsmanId");
         SessionProvider.performStopSessionRequest(this.state.session);
         SessionProvider.removeFromLocalstorage();
-        MqttProvider.stopClient();
+        MqttProvider.unsubscribeToMqtt();
         if (this.interval) {
             clearInterval(this.interval);
         }
         this.setState({
                           session: undefined,
-                          sessionList: []
+                          sessionList: [],
+                          sportsmenList: []
                       });
-        window.location.reload();
+        this.loadSportsmen();
     }
 
     mqttSensorMessageHandler(topic, message) {
@@ -243,8 +249,8 @@ class App extends React.Component {
                         if (parsedMessage.data_type == "power") {
                             valuesArr.push(
                                 (parsedMessage.value + "/" + parsedMessage.timestamp + "/" + newAvg + "/" + (sportsman.power_norm
-                                                                                                            ? sportsman.power_norm
-                                                                                                            : 0))
+                                                                                                             ? sportsman.power_norm
+                                                                                                             : 0))
                             );
                         } else {
                             valuesArr.push(

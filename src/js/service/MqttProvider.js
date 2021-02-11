@@ -26,6 +26,11 @@ class MqttProvider {
         MqttProvider.client.subscribe('telerace/statistic_data', function (err) {})
     }
 
+    static unsubscribeToMqtt() {
+        MqttProvider.client.unsubscribe('telerace/sensors_data', function (err) {})
+        MqttProvider.client.unsubscribe('telerace/statistic_data', function (err) {})
+    }
+
 }
 
 export default MqttProvider;

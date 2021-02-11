@@ -16,6 +16,7 @@ class LineGraph extends React.Component {
     }
 
     componentDidMount() {
+        console.log("mount")
         this.buildChart();
     }
 
@@ -255,12 +256,6 @@ class LineGraph extends React.Component {
                 }
             }
         });
-
-        /*setInterval(function(){
-            // Add two random numbers for each dataset
-            chart.addData([Math.random() * 100, Math.random() * 100], new Date().getTime());
-            // Remove the first point so we dont just add values forever
-        }, 100);*/
     }
 
     render() {

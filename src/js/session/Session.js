@@ -13,18 +13,21 @@ export class Session extends React.Component {
         this.state = {
             selected: [],
             sessionName: "",
-            toDetails: false
+            toDetails: false,
+            invalidSessionName: false,
+            invalidSelected: false
         };
 
         this.onSelect = this.onSelect.bind(this);
         this.stopSession = this.stopSession.bind(this);
         this.initiateSessionStop = this.initiateSessionStop.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.startSession = this.startSession.bind(this);
     }
 
     render() {
-        const {sportsmenList, session, allSportsmen, startSession} = this.props;
-        const {sessionName} = this.state;
+        const {sportsmenList, session, allSportsmen } = this.props;
+        const {sessionName, invalidSessionName, invalidSelected} = this.state;
         const sessionExists = !!session;
 
         return (
@@ -74,16 +77,18 @@ export class Session extends React.Component {
                 ) : (
                      <div className="row session-config h-100 gradient-type1">
                          <div className="col-6 d-flex justify-content-center">
-                             <input className="session-name-input gradient-type6"
+                             <input className={"session-name-input gradient-type6 " + (invalidSessionName ? "border-red" : "")}
                                     value={sessionName}
                                     onChange={this.handleChange}
                                     onBlur={this.handleChange}
+                                    onFocus={() => this.setState({invalidSessionName: false})}
                                     placeholder={"Название сессии |"}/>
                              <CheckboxSelect
-                                 classes={"sportsman-select gradient-type6"}
+                                 classes={"sportsman-select gradient-type6 " + (invalidSelected ? "border-red" : "")}
                                  placeholder={"Спортсмены"}
                                  sessionName={sessionName}
                                  selectHandler={this.onSelect}
+                                 onClick={() => this.setState({invalidSelected: false})}
                                  options={this.prepareOptions(allSportsmen)}
                              />
 
@@ -92,7 +97,7 @@ export class Session extends React.Component {
                              <div className="stop-session-block d-flex align-items-center justify-content-center">
                                  <div className="d-flex align-items-center justify-content-center stop-session-button-wrapper">
                                      <img src="/img/start-session-img.png" height="75" width="75" alt=""
-                                          onClick={() => startSession(this.state.sessionName, this.state.selected)}/>
+                                          onClick={this.startSession}/>
                                  </div>
                              </div>
                          </div>
@@ -131,6 +136,25 @@ export class Session extends React.Component {
         }
 
         this.setState({selected: selected})
+    }
+
+    startSession() {
+        let isValid = true;
+        const {sessionName, selected} = this.state;
+
+        if (!sessionName) {
+            isValid = false;
+            this.setState({invalidSessionName: true});
+        }
+
+        if (!selected || selected.length === 0) {
+            isValid = false;
+            this.setState({invalidSelected: true});
+        }
+
+        if (isValid) {
+            this.props.startSession(this.state.sessionName, this.state.selected)
+        }
     }
 
 

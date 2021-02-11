@@ -16,7 +16,7 @@ export class SportsmanMetricBlock extends React.Component {
                 <div className="d-flex h-100 flex-column justify-content-center align-items-center metrics-wrapper">
                     {metrics}
                 </div>
-                <DetailsChart type={type} chartData={chartData} />
+                <DetailsChart key={chartData.sportsmanId + type} type={type} chartData={chartData} />
             </div>
         );
     }

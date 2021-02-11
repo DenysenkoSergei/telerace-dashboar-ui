@@ -1,3 +1,7 @@
+.current-dashboard {
+    max-height: 640px;
+    overflow-y: auto;
+}
 .current-dashboard .card {
     border-radius: 10px;
     margin-bottom: 20px;

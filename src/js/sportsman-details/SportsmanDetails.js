@@ -86,6 +86,7 @@ export class SportsmanDetails extends React.Component {
 
     prepareHeartRateChartData(sportsman) {
         return {
+            sportsmanId: sportsman.id,
             data: sportsman.heartrate ? sportsman.heartrate : [],
             maxValue: sportsman.heartrate_max ? sportsman.heartrate_max : 0,
             gradientFrom: "#26CEFF",
@@ -106,6 +107,7 @@ export class SportsmanDetails extends React.Component {
 
     prepareSpeedChartData(sportsman) {
         return {
+            sportsmanId: sportsman.id,
             data: sportsman.speed ? sportsman.speed : [],
             maxValue: sportsman.speed_max ? sportsman.speed_max : 0,
             gradientFrom: "#FFDD52",
@@ -127,6 +129,7 @@ export class SportsmanDetails extends React.Component {
 
     preparePowerChartData(sportsman, showPowerNorm) {
         return {
+            sportsmanId: sportsman.id,
             data: sportsman.power ? sportsman.power : [],
             maxValue: sportsman.power_max ? sportsman.power_max : 0,
             gradientFrom: "#48E5E0",
@@ -148,6 +151,7 @@ export class SportsmanDetails extends React.Component {
 
     prepareCadenceChartData(sportsman) {
         return {
+            sportsmanId: sportsman.id,
             data: sportsman.cadence ? sportsman.cadence : [],
             maxValue: sportsman.cadence_max ? sportsman.cadence_max : 0,
             gradientFrom: "#22516F",
@@ -168,6 +172,7 @@ export class SportsmanDetails extends React.Component {
 
     prepareGearChartData(sportsman) {
         return {
+            sportsmanId: sportsman.id,
             data: sportsman.gear_index ? sportsman.gear_index : [],
             maxValue: 0,
             gradientFrom: "#009CDB",

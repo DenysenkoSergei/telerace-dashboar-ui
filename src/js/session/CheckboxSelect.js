@@ -15,11 +15,11 @@ export class CheckboxSelect extends React.Component {
     }
 
     render() {
-        const {classes, options, placeholder } = this.props;
+        const {classes, options, placeholder, onClick } = this.props;
         const {dropdownVisible} = this.state;
 
         return (
-            <div className={"d-flex flex-column justify-content-center checkbox-select " + classes}>
+            <div className={"d-flex flex-column justify-content-center checkbox-select " + classes} onClick={onClick}>
                 <div className="d-flex justify-content-start align-items-center title-block" onClick={this.toggleDropdown}>
                     <div className="flex-grow-1">{placeholder}</div>
                     <img src={"/img/select-icon.png"} width="19" height="10" alt="" style={{marginRight: 20}}/>

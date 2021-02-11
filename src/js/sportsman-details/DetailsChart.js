@@ -5,7 +5,7 @@ import LineGraph from "./LineGraph";
 export class DetailsChart extends React.Component {
 
     render() {
-        const { type, chartData, metrics } = this.props;
+        const { type, chartData } = this.props;
 
         return (
             <div className="d-flex h-100 justify-content-center align-items-center flex-grow-1 details-chart-wrapper">
