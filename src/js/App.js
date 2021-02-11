@@ -118,12 +118,14 @@ class App extends React.Component {
     }
 
     changeTab(val) {
-        this.setState({
-                          showSession: val === 'showSession',
-                          showDetails: val === 'showDetails',
-                          showCurrentDashboard: val === 'showCurrentDashboard',
-                          showSummary: val === 'showSummary'
-                      })
+        if (this.state.session) {
+            this.setState({
+                              showSession: val === 'showSession',
+                              showDetails: val === 'showDetails',
+                              showCurrentDashboard: val === 'showCurrentDashboard',
+                              showSummary: val === 'showSummary'
+                          })
+        }
     }
 
     onSportsmanChange() {

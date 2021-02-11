@@ -7,6 +7,7 @@ import 'chartjs-plugin-annotation';
 class LineGraph extends React.Component {
     chartRef = React.createRef();
     chart = null;
+    maxValuesIndexes = [];
 
     constructor(props) {
         super(props);
@@ -22,23 +23,37 @@ class LineGraph extends React.Component {
         if (this.chart) {
             const {data, maxValue} = this.props.chartData;
             const prevData = this.chart.data.datasets[0].data;
-            let sizeDiff = data.length - prevData.length;
+            let currentCharSize = prevData.length;
+            let sizeDiff = data.length - currentCharSize;
+            let calculatedMaxValue = +this.chart.options.annotation.annotations[0].value;
             if (sizeDiff > 0) {
                 const currentData = [];
                 const avgData = [];
                 const preparedLabels = []
-                for (let i = prevData.length; i < data.length; ++i) {
-                    currentData.push(data[i].split("/")[0])
+                for (let i = currentCharSize; i < data.length; ++i) {
+                    let currentElement = +data[i].split("/")[0];
+                    calculatedMaxValue = calculatedMaxValue > currentElement ? calculatedMaxValue : currentElement;
+                    currentData.push(currentElement);
                     avgData.push(parseFloat(data[i].split("/")[2]).toFixed(2));
                     preparedLabels.push(new Date(+(data[i].split("/")[1])).toLocaleTimeString());
                 }
 
+                if (+this.chart.options.annotation.annotations[0].value < +calculatedMaxValue) {
+                    this.maxValuesIndexes.forEach(inx => this.chart.data.datasets[0].pointBackgroundColor[inx] = 'transparent');
+                }
+
                 for (let j = 0; j < sizeDiff; ++j) {
+                    if (currentData[j] == calculatedMaxValue) {
+                        this.maxValuesIndexes.push(currentCharSize + j);
+                        this.chart.data.datasets[0].pointBackgroundColor.push('#CF1948');
+                    } else {
+                        this.chart.data.datasets[0].pointBackgroundColor.push('transparent');
+                    }
                     this.chart.data.labels.push(preparedLabels[j]);
                     this.chart.data.datasets[0].data.push(currentData[j]);
                     this.chart.data.datasets[1].data.push(avgData[j]);
-                    this.chart.options.annotation.annotations[0].value = maxValue;
                 }
+                this.chart.options.annotation.annotations[0].value = calculatedMaxValue;
                 this.chart.update();
             }
 
@@ -48,11 +63,21 @@ class LineGraph extends React.Component {
     buildChart() {
         const myChartRef = this.chartRef.current.getContext("2d");
 
+        this.maxValuesIndexes = [];
+
         const {data, maxValue, gradientFrom, gradientTo} = this.props.chartData;
 
         const currentData = data.map(dataObject => dataObject.split("/")[0]);
         const avgData = data.map(dataObject => parseFloat(dataObject.split("/")[2]).toFixed(2));
         const preparedLabels = data.map(dataObject => new Date(+dataObject.split("/")[1]).toLocaleTimeString());
+        const pointColors = currentData.map((data, index) => {
+            if (data == maxValue) {
+                this.maxValuesIndexes.push(index);
+                return '#CF1948';
+            } else {
+                return 'transparent';
+            }
+        });
 
         let originalLineDraw = Chart.controllers.line.prototype.draw;
         Chart.helpers.extend(Chart.controllers.line.prototype, {
@@ -95,10 +120,11 @@ class LineGraph extends React.Component {
                         id: "live",
                         borderColor: "transparent",
                         backgroundColor: gradient,
+                        pointBackgroundColor: pointColors,
                         pointBorderColor: "transparent",
                         data: currentData,
-                        hoverRadius: 0,
-                        radius: 0,
+                        hoverRadius: 8,
+                        radius: 8,
                         order: 1
                     },
                     {
