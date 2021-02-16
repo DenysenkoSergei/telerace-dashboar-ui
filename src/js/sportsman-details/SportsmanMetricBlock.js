@@ -6,7 +6,7 @@ import {DetailsChart} from "./DetailsChart";
 export class SportsmanMetricBlock extends React.Component {
 
     render() {
-        const { metrics, bigIconUrl, type, chartData } = this.props;
+        const { metrics, bigIconUrl, type, chartData, showAggregatedChartValues } = this.props;
 
         return (
             <div className="d-flex flex-row justify-content-start sportsman-metric-block">
@@ -16,7 +16,10 @@ export class SportsmanMetricBlock extends React.Component {
                 <div className="d-flex h-100 flex-column justify-content-center align-items-center metrics-wrapper">
                     {metrics}
                 </div>
-                <DetailsChart key={chartData.sportsmanId + type} type={type} chartData={chartData} />
+                <DetailsChart showAggregatedChartValues={showAggregatedChartValues}
+                              key={chartData.sportsmanId + type}
+                              type={type}
+                              chartData={chartData} />
             </div>
         );
     }

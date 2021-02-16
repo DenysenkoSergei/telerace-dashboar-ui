@@ -89,3 +89,15 @@
     font-size: 18px;
     font-weight: 600;
 }
+
+.aggregated-chart-values-wrapper {
+    position: absolute;
+    padding: 10px 10px 10px 15px;
+    background-color: #535B66;
+    border-radius: 10px;
+    color: #FFFFFF;
+}
+
+.aggregated-chart-values {
+    min-width: 100px;
+}

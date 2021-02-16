@@ -2,17 +2,29 @@ import React from "react";
 import "../../css/sportsman-details.css"
 import {SportsmanMetricBlock} from "./SportsmanMetricBlock";
 import {MetricValue} from "./MetricValue";
+import {AggregatedChartValues} from "./AggregatedChartValues";
 
 export class SportsmanDetails extends React.Component {
 
     constructor(props) {
         super(props);
 
+        this.state = {
+            aggregatedChartValuesVisible: false,
+            aggregatedChartValuesTop: 150,
+            aggregatedChartValuesLeft: 150,
+            selectedTime: 0
+        }
+
         this.selectAnotherSportsman = this.selectAnotherSportsman.bind(this);
+        this.showAggregatedChartValues = this.showAggregatedChartValues.bind(this);
+        this.hideAggregatedChartValues = this.hideAggregatedChartValues.bind(this);
+        this.prepareAggregatedChartValues = this.prepareAggregatedChartValues.bind(this);
     }
 
     render() {
-        const {sportsmenList, currentSportsman } = this.props;
+        const {sportsmenList, currentSportsman} = this.props;
+        const {aggregatedChartValuesVisible} = this.state;
 
         return (
             <div className="d-flex h-100 flex-column justify-content-center sportsman-details">
@@ -48,29 +60,98 @@ export class SportsmanDetails extends React.Component {
                     <div className="d-flex h-100 flex-column justify-content-center">
                         <SportsmanMetricBlock bigIconUrl={"/img/heartrate-icon-big.png"}
                                               type="heartrate"
+                                              showAggregatedChartValues={this.showAggregatedChartValues}
                                               chartData={this.prepareHeartRateChartData(currentSportsman, false)}
                                               metrics={this.prepareHeartRateMetrics(currentSportsman)}/>
                         <SportsmanMetricBlock bigIconUrl={"/img/speed-icon-big.png"}
                                               type="speed"
+                                              showAggregatedChartValues={this.showAggregatedChartValues}
                                               chartData={this.prepareSpeedChartData(currentSportsman, false)}
                                               metrics={this.prepareSpeedMetrics(currentSportsman)}/>
                         <SportsmanMetricBlock bigIconUrl={"/img/power-icon-big.png"}
                                               type="power"
+                                              showAggregatedChartValues={this.showAggregatedChartValues}
                                               chartData={this.preparePowerChartData(currentSportsman, true)}
                                               metrics={this.preparePowerMetrics(currentSportsman)}/>
                         <SportsmanMetricBlock bigIconUrl={"/img/cadence-icon-big.png"}
                                               type="cadence"
+                                              showAggregatedChartValues={this.showAggregatedChartValues}
                                               chartData={this.prepareCadenceChartData(currentSportsman, false)}
                                               metrics={this.prepareCadenceMetrics(currentSportsman)}/>
                         <SportsmanMetricBlock bigIconUrl={"/img/gear-icon-big.png"}
                                               type="gear"
+                                              showAggregatedChartValues={this.showAggregatedChartValues}
                                               chartData={this.prepareGearChartData(currentSportsman, false)}
                                               metrics={this.prepareGearMetrics(currentSportsman)}/>
                     </div>
                 ) : null}
+                {aggregatedChartValuesVisible
+                 ? (
+                     <AggregatedChartValues
+                         {...this.prepareAggregatedChartValues()}
+                         hideAggregatedChartValues={this.hideAggregatedChartValues}
+                     />
+                 ) : null}
 
             </div>
         );
+    }
+
+    showAggregatedChartValues(timestamp, top, left) {
+        this.setState(
+            {
+                aggregatedChartValuesVisible: true,
+                aggregatedChartValuesTop: top,
+                aggregatedChartValuesLeft: left,
+                showAggregatedChartValuesTimestamp: timestamp
+            }
+        );
+    }
+
+    hideAggregatedChartValues() {
+        this.setState(
+            {
+                aggregatedChartValuesVisible: false
+            }
+        );
+    }
+
+    prepareAggregatedChartValues() {
+        const {aggregatedChartValuesTop, aggregatedChartValuesLeft, showAggregatedChartValuesTimestamp} = this.state;
+        const {currentSportsman} = this.props;
+
+        return {
+            hr: this.extractWithApplicableTimestamp(currentSportsman.heartrate, showAggregatedChartValuesTimestamp),
+            speed: this.extractWithApplicableTimestamp(currentSportsman.speed, showAggregatedChartValuesTimestamp),
+            power: this.extractWithApplicableTimestamp(currentSportsman.power, showAggregatedChartValuesTimestamp),
+            cadence: this.extractWithApplicableTimestamp(currentSportsman.cadence, showAggregatedChartValuesTimestamp),
+            gear: this.extractWithApplicableTimestamp(currentSportsman.gear_index, showAggregatedChartValuesTimestamp),
+            timestamp: new Date(showAggregatedChartValuesTimestamp).toLocaleTimeString({ timeZone: 'UTC' }),
+            top: aggregatedChartValuesTop,
+            left: aggregatedChartValuesLeft
+        }
+    }
+
+    extractWithApplicableTimestamp(values, timestamp) {
+        if (!values) {
+            return "-";
+        }
+
+        let diff = Number.MAX_VALUE;
+
+        for (let i = 0; i < values.length; ++i) {
+            let dataObject = values[i];
+            let currentDiff = Math.abs(dataObject.split("/")[1] - timestamp);
+            if (currentDiff > diff) {
+                return dataObject.split("/")[0];
+            } else {
+                diff = currentDiff;
+            }
+            if (i === values.length - 1) {
+                return dataObject.split("/")[0];
+            }
+        }
+        return "-";
     }
 
     prepareHeartRateMetrics(sportsman) {

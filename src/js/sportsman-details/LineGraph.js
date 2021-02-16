@@ -13,16 +13,16 @@ class LineGraph extends React.Component {
         super(props);
 
         this.buildChart = this.buildChart.bind(this);
+        this.chartClickHandler = this.chartClickHandler.bind(this);
     }
 
     componentDidMount() {
-        console.log("mount")
         this.buildChart();
     }
 
     componentDidUpdate() {
         if (this.chart) {
-            const {data, showPowerNorm } = this.props.chartData;
+            const {data, showPowerNorm} = this.props.chartData;
             const prevData = this.chart.data.datasets[0].data;
             let currentCharSize = prevData.length;
             let sizeDiff = data.length - currentCharSize;
@@ -40,7 +40,7 @@ class LineGraph extends React.Component {
                     if (showPowerNorm) {
                         powerNorm.push(parseFloat(data[i].split("/")[3]).toFixed(2));
                     }
-                    preparedLabels.push(new Date(+(data[i].split("/")[1])).toLocaleTimeString());
+                    preparedLabels.push(new Date(+(data[i].split("/")[1])).toLocaleTimeString({ timeZone: 'UTC' }));
                 }
 
                 if (+this.chart.options.annotation.annotations[0].value < +calculatedMaxValue) {
@@ -81,7 +81,7 @@ class LineGraph extends React.Component {
         if (showPowerNorm) {
             powerNorm = data.map(dataObject => parseFloat(dataObject.split("/")[3]).toFixed(2));
         }
-        const preparedLabels = data.map(dataObject => new Date(+dataObject.split("/")[1]).toLocaleTimeString());
+        const preparedLabels = data.map(dataObject => new Date(+dataObject.split("/")[1]).toLocaleTimeString({ timeZone: 'UTC' }));
 
         const pointColors = currentData.map((data, index) => {
             if (data == maxValue) {
@@ -139,7 +139,7 @@ class LineGraph extends React.Component {
             {
                 id: "avg",
                 borderColor: "#000000",
-                borderDash: [10,10],
+                borderDash: [10, 10],
                 backgroundColor: "transparent",
                 pointBackgroundColor: "transparent",
                 pointBorderColor: "transparent",
@@ -154,7 +154,7 @@ class LineGraph extends React.Component {
                 {
                     id: "powerNorm",
                     borderColor: "#1395D7",
-                    borderDash: [10,10],
+                    borderDash: [10, 10],
                     backgroundColor: "transparent",
                     pointBackgroundColor: "transparent",
                     pointBorderColor: "transparent",
@@ -165,6 +165,8 @@ class LineGraph extends React.Component {
             )
         }
 
+        let self = this;
+
         this.chart = new Chart(myChartRef, {
             type: "line",
             data: {
@@ -172,6 +174,9 @@ class LineGraph extends React.Component {
                 datasets: preparedDatasets
             },
             options: {
+                onClick: (e) => {
+                    self.chartClickHandler(e)
+                },
                 animation: {
                     duration: 0
                 },
@@ -210,13 +215,13 @@ class LineGraph extends React.Component {
                     intersect: false,
                     displayColors: false,
                     callbacks: {
-                        label: function (tooltipItems, data) {
+                        label: function(tooltipItems, data) {
                             if (tooltipItems.datasetIndex == 0) {
-                                return  "live: " + tooltipItems.yLabel;
+                                return "live: " + tooltipItems.yLabel;
                             } else if (tooltipItems.datasetIndex == 1) {
-                                return  "avg: " + tooltipItems.yLabel;
+                                return "avg: " + tooltipItems.yLabel;
                             } else {
-                                return  "norm: " + tooltipItems.yLabel;
+                                return "norm: " + tooltipItems.yLabel;
                             }
                         }
                     }
@@ -256,6 +261,15 @@ class LineGraph extends React.Component {
                 }
             }
         });
+    }
+
+    chartClickHandler(e) {
+        const canvasPosition = Chart.helpers.getRelativePosition(e, this.chart);
+        const dataX = this.chart.scales['x-axis-0'].getValueForPixel(canvasPosition.x);
+        const { data } = this.props.chartData
+        if (data && data.length > dataX) {
+            this.props.showAggregatedChartValues(+(data[dataX].split("/")[1]), e.pageY, e.pageX);
+        }
     }
 
     render() {
